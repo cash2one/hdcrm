@@ -1,0 +1,256 @@
+{% extends 'cleanbase.html' %}
+
+{% block page-header %} 
+	<h1> View Order </h1>
+{% endblock %}
+
+
+{% block content %}
+
+	{% if order.canedit %}
+		<h1> 添加新订单 - {{ order.id }} </h1>
+	{% else %}
+		<h1> 查看订单编号 - {{ order.id }} </h1>
+	{% endif %}
+	
+	<h2> 
+			<a href={% url 'printOrder' order_id=order.id %}>
+			{% if order.status == 'PENDING' %}
+				预览计划单
+			{% else %}
+				打印计划单
+			{% endif %}
+		</a>
+		</h2>
+
+	<div class="row">
+	<div class='col-md-6'>
+	<h2> 状态 -  <mark> {{ order.get_status_display }} </mark></h2>
+		
+	<table class='table'>
+		<tr>
+			<th> 订单编号 </th> <td> {{ order.id }} </td>
+		</tr>
+		<tr>
+			<th> 客户 </th> <td> {{ order.client.name }} </td>
+		</tr>
+		<tr>
+			<th> 销售员 </th> <td> {{ order.user.name }} </td>
+		</tr>
+	</table>
+	</div>
+
+
+	<div class='col-md-12'>
+		<h2> <mark>
+			{% if order.status = 'PENDING' %}
+				订单信息填写完全后， 请
+				<a href={% url 'changeorderstatus' order_id=order.pk new_status='SUBMIT' %}>
+				提交
+				</a>
+					提交后不能更改
+			
+			{% elif order.status = 'SUBMIT' %}
+				
+				 订单发货结束后，请
+				<a href={% url 'changeorderstatus' order_id=order.pk new_status='DONE' %}>
+				完成
+				</a>
+			{% else %}
+
+			{% endif %}
+		</mark>
+		</h2>
+	</div>
+
+
+	{% if user.addorder %}
+	<div class='col-md-6'>
+	<table class='table'>
+		<h2> 财务信息 - 
+			<a href={% url 'addorderaccount' order_id=order.pk %}>
+			{% if order.orderaccount_set.all|length == 0 %}
+				添加
+			{% else %}
+				修改
+			{% endif %}
+			</a>
+		</h2>
+
+		<tr>
+			<th> 收款账户 </th>
+			<td> 
+			{{ order.orderaccount_set.first.get_account_display}}
+			</td>
+		</tr>
+		<tr>
+			<th> 总金额 </th>
+			<td> 
+			{{ order.orderaccount_set.first.total}}
+			</td>
+		</tr>
+		<tr>
+			<th> 付款方式 </th>
+			<td> 
+			{{ order.orderaccount_set.first.paymentterm}}
+			</td>
+		</tr>
+		
+	</table>
+	</div>
+	{% endif %}
+
+
+
+	<div class='col-md-6'>
+		<h2> 交货信息 - <a href={% url 'adddeliver' order_id=order.id %}>
+		修改
+		</a>
+		</h2>	
+		<table class='table'>
+			<tr>
+				<th> 交货期</th> 
+				<td>
+					{% if order.orderDeliver %}
+						{{ order.orderDeliver.deliverDate|date:'Y-m-d' }}
+					{% else %} 
+					   N/A
+					{% endif %}
+				</td>
+			</tr>
+		</table>
+	</div>
+
+
+	<div class='col-md-6'>
+		<h2> 收入 - 支出 </h2>
+		<label class='col-md-6'> 
+			<a href={% url 'addorderincome' order_id=order.pk %}>
+				添加新的收入
+			</a>
+		</label>
+		<label class='col-md-6'> 
+			<a href={% url 'addorderexpense' order_id=order.pk %}>
+				添加新的支出
+			</a>
+		</label>
+		<table class='table, col-md-12'>
+			{% for cash in order.ordercashflow_set.all %}
+				<tr>
+					<th>
+						{% if cash.amount > 0 %}
+							收入
+						{% else %}
+							支出
+						{% endif %}
+					</th>
+					<td> {{ cash.amount }} </td>
+					<td> {{ cash.note }} </td>
+					<td> 
+					<a href={% url 'deleteTransfer' transfer_id=cash.id %}>
+					删除
+					</a>
+					</td>
+				</tr>
+			{% endfor %}
+		</table>
+		
+	</div>
+
+	</div>
+
+
+	
+
+	{% if user.adduser %}
+	<h2> Status </h2>
+	<ul>
+		<li><a href={% url "changeorderstatus" order_id=order.pk new_status='PENDING' %}>
+		   PENDING
+		   </a>
+		</li>
+		<li><a href={% url "changeorderstatus" order_id=order.pk new_status='SUBMIT' %}>
+		   ACTIVE
+		   </a>
+		</li>
+		<li><a href={% url "changeorderstatus" order_id=order.pk new_status='DONE' %}>
+		   DONE
+		   </a>
+		</li>
+	</ul>
+	{% endif %}
+
+	<h2> 产品列表 </h2>
+	<table class='table'>
+		{% for item in order.orderitem_set.all %}
+			<tr>
+				<td> {{ item.updated_date}} </td>
+				<td> {{ item.id }} </td>
+				<td>
+					{% if item.status = False %} <s>  {% endif %}{{ item.product_snap|linebreaks }}
+					{% if item.status = False %} </s> {% endif %}
+
+				<td> 
+					{% if item.status = False %} <s>  {% endif %}
+					{{ item.amount }} 
+					{% if item.status = False %} </s> {% endif %}
+				</td>
+				<td> 
+					{% if item.status = False %} <s>  {% endif %}
+					{{ item.note }} 
+					{% if item.status = False %} </s> {% endif %}
+				</td>
+				<td> {{ order.canedit }} </td>
+				{% if item.status and order.canedit %}
+					<td> 
+					<a href={% url 'disableorderitem' item_id=item.pk %} >
+					      删除
+					      </a>
+					</td>
+				{% endif %}
+			</tr>
+		{% endfor %}
+	</table>
+
+	{% if order.canedit %}
+		<h2> 添加产品 </h2>
+		{% load bootstrap3 %}
+		<table class='table'>
+		<form action={%url 'additem' order_id=order.id %}  method="post" class="form">
+			{% csrf_token %}
+			<tr>
+			{% for field in additemform.visible_fields %}
+				<td>
+				{{field.errors.as_url}}
+				{{field}}
+				</td>
+			{% endfor %}
+
+			<td>
+			{% buttons %}
+			<button type="submit" class="btn btn-primary">
+				{% bootstrap_icon "star" %} 添加新产品
+			</button>
+			</td>
+			{% endbuttons %}
+			</tr>
+		</form>
+		</table>
+	{% endif %}
+
+	<div class='com-md-12'>
+		<h2> 组装及包装要求 {% if order.canedit %} 
+		<a href={% url 'editorderpacking' order_id=order.id %}>
+		修改
+		</a>
+		{% endif %}
+		</h2>
+		<div class="solid">
+		<div class='text-left'>
+		{{ order.packing|linebreaks }}
+		</div>
+		</div>
+	</div>
+
+	
+{% endblock %}

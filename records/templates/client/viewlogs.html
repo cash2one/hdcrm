@@ -1,0 +1,28 @@
+{% extends 'cleanbase.html' %}
+
+
+{% block content %}
+	<h1> 客户历史 - {{client}} </h1>
+
+	<ul class="text-left">
+		<li > <a href={% url 'addclientlog' client_id=client.id %}> 添加记录 </a></li>
+	</ul>
+
+	<table class='table table-striped  table-bordered'>
+		<tr>
+			
+			<th> 时间 </th>
+			<th> 用户 </th>
+			<th> Note </th>
+		</tr>
+
+		{% for log in client.clientlog_set.all %}
+			<tr>
+				<td> {{ log.created_date|date:"Y-m-d" }} </td>
+				<td> {{ log.user.name }} </td>
+				<td> {{ log.note }}</td>
+			</tr>
+		{% endfor %}
+
+	</table>
+{% endblock %}

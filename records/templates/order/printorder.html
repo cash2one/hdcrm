@@ -1,0 +1,81 @@
+{% extends 'cleanbase.html' %}
+
+{% block page-header %} 
+	<h1> View Order </h1>
+{% endblock %}
+
+
+{% block content %}
+
+	<h1> 生产计划单 - {{ order.id }} </h1>
+		
+	<div class="row">
+
+	<table class='table'>
+		<tr>
+			<th> 订单编号 </th> <td> {{ order.id }} </td>
+		</tr>
+		<tr>
+			<th> 客户 </th> <td> {{ order.client.id }} </td>
+		</tr>
+		<tr>
+			<th> 销售员 </th> <td> {{ order.user.name }} </td>
+		</tr>
+		<tr>
+			<th> 创立日期</th> <td> {{ order.created_date|date:'Y-m-d' }} </td>
+		<tr>
+			<th> 交货期</th> 
+			<td>
+				{% if order.orderDeliver %}
+				{{ order.orderDeliver.deliverDate|date:'Y-m-d' }}
+				{% else %} 
+				N/A
+				{% endif %}
+			</td>
+		</tr>
+	</table>
+	</div>
+
+	
+	<h2> 产品列表 </h2>
+	<table class='table'>
+		<tr>
+				<th> 产品编号 </th>
+				<th> 产品说明</th>
+				<th> 数量</th>
+				<th> 附注</th>
+			</tr>
+		{% for item in order.orderitem_set.all %}
+			
+			{% if item.status = True %}
+			<tr>
+				<td> {{ item.updated_date}} </td>
+				<td> {{ item.id }} </td>
+				<td>
+					{{ item.product_snap|linebreaks }}
+				<td> 
+					{{ item.amount }} 
+					
+				</td>
+				<td> 
+					{{ item.note }} 
+				</td>
+			</tr>
+			{% endif %}
+		{% endfor %}
+	</table>
+
+
+	<div class='com-md-12'>
+		<h2> 
+			组装及包装要求
+		</h2>
+		<div class="solid">
+		<div class='text-left'>
+		{{ order.packing|linebreaks }}
+		</div>
+		</div>
+	</div>
+
+	
+{% endblock %}

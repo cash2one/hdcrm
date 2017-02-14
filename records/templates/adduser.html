@@ -1,0 +1,20 @@
+{% extends 'cleanbase.html' %}
+
+{% load staticfiles %}
+
+	
+{% block content %}
+	<h1> 添加新用户 </h1>
+
+	{% load bootstrap3 %}
+	<form action={% url 'adduser' %} method="post" class="form">
+		{% csrf_token %}
+		{% bootstrap_form form %}
+		{% buttons %}
+		<button type="submit" class="btn btn-primary">
+			{% bootstrap_icon "star" %} Submit
+		</button>
+		{% endbuttons %}
+	</form>
+
+{% endblock %}

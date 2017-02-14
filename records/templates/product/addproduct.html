@@ -1,0 +1,21 @@
+{% extends 'cleanbase.html' %}
+
+{% load staticfiles %}
+
+	
+{% block content %}
+	<h1> 添加新产品 </h1>
+	<h2> 客户: {{ client.name }} </h2>
+
+	{% load bootstrap3 %}
+	<form action={% url 'addproduct' client_id=client.id %} method="post" class="form">
+		{% csrf_token %}
+		{% bootstrap_form form %}
+		{% buttons %}
+		<button type="submit" class="btn btn-primary">
+			{% bootstrap_icon "star" %} Submit
+		</button>
+		{% endbuttons %}
+	</form>
+
+{% endblock %}

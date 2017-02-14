@@ -1,0 +1,38 @@
+{% extends 'cleanbase.html' %}
+
+{% block page-header %} 
+	<h1> 产品列表 </h1>
+{% endblock %}
+
+
+{% block content %}
+	<h1>  产品列表</h1>
+
+	<table class='table table-striped  table-bordered'>
+		<tr>
+			<th> 编号</th>
+			<th> 名称 </th>
+			<th> 分类 </th>
+			<th> 尺寸 </th>
+			<th> 颜色 </th>
+			<th> 材料 </th>
+		</tr>
+
+		{% for product in products %}
+			<tr>
+				<td>
+					{{ product.pk }}
+				</td>
+				
+				<td> <a href={% url 'viewproduct' product_id=product.pk %}>
+				{{ product.name }} </a>
+				 </td>
+				<td> {{ product.group }}</td>
+				<td> {{ product.size }}</td>
+				<td> {{ product.color }} {{ product.phantom}} </td>
+				<td> {{ product.material }}</td>
+			</tr>
+		{% endfor %}
+
+	</table>
+{% endblock %}

@@ -1,0 +1,24 @@
+.green {
+	background:green;
+}
+
+.red {
+	background:red;
+}
+
+div.solid {
+    border-style:solid;
+}
+
+table {
+	text-align: left
+}
+
+td {
+    position: relative;
+    padding: 5px 10px;
+}
+
+tr.disable{
+    background-color: grey;
+}

@@ -1,0 +1,109 @@
+{% extends 'cleanbase.html' %}
+
+{% block page-header %} 
+	<h1> View Client </h1>
+{% endblock %}
+
+
+{% block content %}
+	<h1> 产品 - {{product}}</h1>
+	<h2> 客户编号 - {{ product.client.id }} </h2>
+	<h2> 销售人员 - {{ product.client.user.name }} </h2>
+	<h2> 创立人员 - {{ product.user.name }} </h2>
+
+	{% if user.addproduct %}
+	<ul class="text-left">
+		<li> 
+		<a href={%url 'editproduct' product_id=product.pk %}> 
+			修改 
+		</a> 
+		</li>
+
+		<li> 
+		<a href={%url 'addproduct' client_id=product.client.pk %}> 
+		添加新产品
+		</a> 
+		</li>
+
+		<li> 
+		<a href={%url 'productuploadfile' product_id=product.pk %}> 
+		添加附件
+		</a> 
+		</li>
+	</ul>
+	{% endif %}
+
+
+	<table class='table'>
+		<tr> 
+			<th> 昵称 </th> <td> {{ product.name }}</td>
+		</tr>
+		<tr> 
+			<th> 分类 </th> <td> {{ product.get_group_display }}</td>
+		</tr>
+		<tr> 
+			<th> 尺寸 </th> <td> {{ product.size }}</td>
+		</tr>
+		<tr> 
+			<th> 颜色 </th> <td> {{ product.color }}</td>
+		</tr>
+		<tr> 
+			<th> Phantom号 </th> <td> {{ product.phantom }}</td>
+		</tr>
+		<tr> 
+			<th> 材料 </th> <td> {{ product.material }}</td>
+		</tr>
+		<tr> 
+			<th> 其他 </th> <td> {{ product.info|linebreaks }}</td>
+		</tr>
+		{% if user.addproduct %}
+		<tr> 
+			<th> 销售价格 </th> <td> {{ product.quote }}</td>
+		</tr>
+		{% endif %}
+	</table>
+
+{% if product.productfile_set.all|length > 0 %}
+	<h2> 附件 </h2>
+	<table class='table'>
+	<tr>
+		<th> 创立时间 </th> 
+		<th> 上传人</th> 
+		<th> 文件名 </th>
+		<th> View </th>
+	</tr>
+	{% for file in product.productfile_set.all %}
+		<tr>
+			<td> {{ file.created_date}} </td>
+			<td> {{ file.user.name }} </td>
+			<td> <a href={{ file.upload.url }} >
+					{{ file.filename }}
+				</a>
+			</td>
+			<td> 
+				{% if file.isImage %}
+					<img src={{ file.upload.url }} 
+					width=100 height=100/>
+				{% endif %}
+			</td>
+			<td> <a href={% url 'deleteproductfile' productfile_id=file.id %}>
+			删除
+			</a>
+			</td>
+
+		</tr>
+
+	{% endfor %}
+	</table>
+{% endif %}
+<h2> 历史记录 </h2>
+<table class='table'>
+	{% for log in product.productlog_set.all %}
+		<tr>
+			<td> {{ log.created_date|date:'y/m/d' }} </td>
+			<td> {{ log.message }} </td>
+		</tr>
+	{% endfor %}
+</table>
+	
+{% endblock %}

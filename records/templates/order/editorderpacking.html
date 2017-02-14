@@ -1,0 +1,21 @@
+{% extends 'cleanbase.html' %}
+
+{% load staticfiles %}
+
+	
+{% block content %}
+	<h1> 修改 组装／包装 说明 </h1>
+	<h2> 订单编号： {{order.id}} </h2>
+
+	{% load bootstrap3 %}
+	<form action={% url 'editorderpacking' order_id=order.id %} method="post" class="form">
+		{% csrf_token %}
+		{% bootstrap_form form %}
+		{% buttons %}
+		<button type="submit" class="btn btn-primary">
+			{% bootstrap_icon "star" %} Submit
+		</button>
+		{% endbuttons %}
+	</form>
+
+{% endblock %}

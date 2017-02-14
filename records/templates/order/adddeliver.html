@@ -1,0 +1,21 @@
+{% extends 'cleanbase.html' %}
+
+{% load staticfiles %}
+
+	
+{% block content %}
+	<h1> 订单编号- {{ order.id }} - 修改交货期</h1>
+	
+		<h2> <mark> 输入的格式  YYYY-MM-DD  例如： 2017-6-23 </mark></h2>
+	{% load bootstrap3 %}
+	<form action={% url 'adddeliver' order_id=order.id %} method="post" class="form">
+		{% csrf_token %}
+		{% bootstrap_form form %}
+		{% buttons %}
+		<button type="submit" class="btn btn-primary">
+			{% bootstrap_icon "star" %} Submit
+		</button>
+		{% endbuttons %}
+	</form>
+
+{% endblock %}

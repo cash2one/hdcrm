@@ -1,0 +1,92 @@
+{% extends 'cleanbase.html' %}
+
+{% block page-header %} 
+	<h1> View Client </h1>
+{% endblock %}
+
+
+{% block content %}
+	<h1> 客户 - {{client}}</h1>
+	<h4> <mark> {{ client.get_ranking_display }} </mark></h4>
+	<ul class="text-left">
+		<li> 
+		<a href={%url 'editclient' client_id=client.pk %}> 
+		修改客户信息 
+		</a> 
+		</li>
+
+		<li> 
+		<a href={%url 'addproduct' client_id=client.pk %}> 
+		添加新产品
+		</a> 
+		</li>
+
+		<li> 
+		<a href={%url 'addorder' client_id=client.pk %}> 
+		添加新订单
+		</a> 
+		</li>
+	</ul>
+
+	<table class='table'>
+		<tr> 
+			<th> 销售员 </th> <td> {{ client.user.name }}</td>
+		</tr>
+		<tr> 
+			<th> 地区</th> <td> {{ client.location }}</td>
+		</tr>
+		<tr> 
+			<th> 付款方式 </th> <td> {{ client.paymentterm }}</td>
+		</tr>
+		<tr> 
+			<th> 补充信息 </th> <td> {{ client.info|linebreaks }}</td>
+		</tr>
+		<tr> 
+			<th> 创立日期 </th> <td> {{ client.created_date|date:"Y/M/d" }}</td>
+		</tr>
+	</table>
+
+<h2> 产品列表 </h2>
+<table class='table'>
+	{% for product in client.product_set.all %}
+		<tr>
+			<td>
+			 <a href={% url 'viewproduct' product_id=product.id %}> 
+			 {{ product.name }} 
+			 </a>
+			 </td>
+			 <td> {{ product.quote }} </td>
+			 <td> {{ product.get_group_display }} </td>
+			 <td> {{ product.size }} </td>
+			 <td> {{ product.color }} </td>
+			 <td> {{ product.phantom }} </td>
+			 <td> {{ product.material }} </td>
+			 <td> {{ product.info }} </td>
+
+		</tr>
+	{% endfor %}
+</table>
+
+{% if client.order_set.all|length > 0 %}
+<h2> 订单列表 </h2>
+<table class='table'>
+	<tr>
+		<th> 创立时间 </th>
+		<th> 订单编号</th>
+		<th> 状态</th>
+		<th> 交期 </th>
+	</tr>
+{% for order in client.order_set.all %}
+	<tr>
+		<td> {{ order.created_date|date:"Y/m/d h:i:s a"}} </td>
+		<td> <a href={% url 'vieworder' order_id=order.id %}>
+		{{ order.id }} </a></td>
+		<td> {{ order.get_status_display }} </td>
+		<td> {{ order.orderDeliver }} </td>
+	</tr>
+{% endfor %}
+
+</table>
+{% endif %}
+	
+{% endblock %}

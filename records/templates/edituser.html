@@ -1,0 +1,20 @@
+{% extends 'cleanbase.html' %}
+
+{% load staticfiles %}
+
+	
+{% block content %}
+	<h1> 修改用户信息 - {{ user.username }} </h1>
+
+	{% load bootstrap3 %}
+	<form action={% url 'edituser' user_id=user.pk %} method="post" class="form">
+		{% csrf_token %}
+		{% bootstrap_form form %}
+		{% buttons %}
+		<button type="submit" class="btn btn-primary">
+			{% bootstrap_icon "star" %} Submit
+		</button>
+		{% endbuttons %}
+	</form>
+
+{% endblock %}

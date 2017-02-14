@@ -1,0 +1,23 @@
+{% extends 'cleanbase.html' %}
+
+
+
+
+{% load staticfiles %}
+
+	
+{% block content %}
+	<h1> 添加附件 - {{ product.name }}  </h1>
+
+	{% load bootstrap3 %}
+	<form action={% url 'productuploadfile' product_id=product.id %} method="post" class="form" enctype="multipart/form-data">
+		{% csrf_token %}
+		{% bootstrap_form form %}
+		{% buttons %}
+		<button type="submit" class="btn btn-primary">
+			{% bootstrap_icon "star" %} Submit
+		</button>
+		{% endbuttons %}
+	</form>
+
+{% endblock %}

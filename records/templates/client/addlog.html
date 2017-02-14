@@ -1,0 +1,28 @@
+{% extends 'cleanbase.html' %}
+
+{% load staticfiles %}
+
+	
+{% block content %}
+	<h1> 客户-{{client.name}}  登记信息 </h1>
+
+	{% if client.clientlog_set.first %}
+		<div class='text-left'>
+		<p class='lead text-left'> 
+		{{ client.clientlog_set.first.note|linebreaks }} 
+		</br>
+		<small> - 上一次记录 </small></p>
+		</div>
+	{% endif %}
+	{% load bootstrap3 %}
+	<form action={% url 'addclientlog'  client_id=client.id%} method="post" class="form">
+		{% csrf_token %}
+		{% bootstrap_form form %}
+		{% buttons %}
+		<button type="submit" class="btn btn-primary">
+			{% bootstrap_icon "star" %} Submit
+		</button>
+		{% endbuttons %}
+	</form>
+
+{% endblock %}

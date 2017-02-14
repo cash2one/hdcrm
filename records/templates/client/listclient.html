@@ -1,0 +1,62 @@
+{% extends 'cleanbase.html' %}
+
+{% block page-header %} 
+	<h1> 客户列表  </h1>
+{% endblock %}
+
+
+{% block content %}
+	<h1> 客户列表</h1>
+
+	<ul class="text-left">
+		<li > <a href={% url 'addclient' %}> 添加新客户 </a></li>
+	</ul>
+
+	<table class='table table-striped  table-bordered'>
+		<tr>
+			<th> 客户 </th>
+			<th> 状态 </th>
+			<th> 最近一次订单 </th>
+			<th> 最近一次联系 </th>
+			<th> 下一次应该联系 </th>
+		</tr>
+
+		{% for client in clientlist %}
+			<tr>
+				<td> <a href={% url 'viewclient' client_id=client.pk %}>
+				{{ client.name }} </a>
+				 </td>
+				<td> {{ client.get_ranking_display }} </td>
+				<td> {{ client.order_set.first.created_date|date:'Y-m-d' }}</td>
+				<td>
+					<a href={% url 'viewclientlog' client_id=client.id %}>
+					
+					{% if client.clientlog_set.all|length > 0 %}
+						{{ client.clientlog_set.first.created_date|date:'Y-m-d'}}
+					{% else %}
+						N/A
+					{% endif %}
+					</a>
+				</td>
+				<td>
+					<a href={% url 'addclientlog' client_id=client.id %}>
+					{% if client.clientlog_set.all|length > 0 %}
+						{% if client.clientlog_set.first.needAction %}
+							<p class="bg-danger">
+						{% endif %}
+							{{ client.clientlog_set.first.nextDate|date:'Y-m-d'}}
+						{% if client.clientlog_set.first.needAction %}
+							</p>
+						{% endif %}
+						
+					{% else %}
+						N/A
+					{% endif %}
+					</a>
+				</td>
+
+			</tr>
+		{% endfor %}
+
+	</table>
+{% endblock %}
